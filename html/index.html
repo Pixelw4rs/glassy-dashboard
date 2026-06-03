@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassy Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 30%, #4c1d95 65%, #831843 100%);
+            color: #ffffff;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .glass:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-modal {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Reusable Native Slider Styling for Volume & Time */
+        .native-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            height: 4px;
+            border-radius: 9999px;
+            outline: none;
+            transition: background 0.2s;
+        }
+        
+        /* Time Slider Dynamic Fill Trick using CSS Variables */
+        .time-slider {
+            background: linear-gradient(to right, #a855f7 var(--progress, 0%), rgba(255,255,255,0.2) var(--progress, 0%));
+        }
+
+        .native-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+            transition: transform 0.1s;
+        }
+        .native-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            background: #a855f7;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <nav class="glass-nav fixed w-full z-40 top-0">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-circle-nodes text-2xl text-cyan-400 drop-shadow-md"></i>
+                    <span class="font-bold text-xl tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Workspace</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-2">
+                    <a href="#services" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Services</a>
+                    <a href="#weather" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Weather</a>
+                    <a href="#music" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Music Suite</a>
+                    <a href="#feed" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Feeds</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full space-y-8">
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <section id="services" class="lg:col-span-2 glass p-8 flex flex-col relative group/section">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold flex items-center gap-3">
+                        <i class="fa-solid fa-cubes text-blue-400"></i> Apps & Services
+                    </h2>
+                    <button onclick="openServiceModal()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-white/10 transition-all active:scale-95">
+                        <i class="fa-solid fa-plus text-cyan-400"></i> Add Service
+                    </button>
+                </div>
+                <div id="services-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 flex-grow"></div>
+            </section>
+
+            <section id="weather" class="glass p-8 flex flex-col justify-between relative">
+                <div class="flex justify-between items-start">
+                    <h2 class="text-2xl font-bold flex items-center gap-3">
+                        <i class="fa-solid fa-cloud-sun text-amber-400"></i> Weather
+                    </h2>
+                    <button onclick="openWeatherModal()" class="bg-white/10 hover:bg-white/20 text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/10 transition-all flex items-center gap-1.5 active:scale-95">
+                        Expand <i class="fa-solid fa-expand text-[10px]"></i>
+                    </button>
+                </div>
+                <div class="flex-grow flex flex-col items-center justify-center my-6">
+                    <div id="weather-main-icon-container">
+                        <i id="weather-icon" class="fa-solid fa-circle-notch fa-spin text-5xl mb-4 text-white/50"></i>
+                    </div>
+                    <div class="text-6xl font-extrabold tracking-tighter drop-shadow"><span id="weather-temp">--</span>°C</div>
+                    <div id="weather-desc" class="text-sm mt-2 font-medium tracking-wide text-white/70">Updating forecast...</div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs bg-black/20 p-3.5 rounded-2xl border border-white/5">
+                    <div class="flex items-center gap-2 justify-center">
+                        <i class="fa-solid fa-wind text-cyan-300"></i>
+                        <span id="weather-wind">-- km/h</span>
+                    </div>
+                    <div class="flex items-center gap-2 justify-center">
+                        <i class="fa-solid fa-droplet text-blue-400"></i>
+                        <span id="weather-humidity">-- %</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section id="music" class="glass p-6 relative group/jf overflow-hidden transition-all duration-500">
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/20 blur-3xl rounded-full pointer-events-none"></div>
+            
+            <div class="absolute top-4 right-4 flex items-center gap-4 z-10">
+                <button onclick="toggleQueuePanel()" class="text-white/40 hover:text-purple-400 transition-colors" title="Toggle Queue & Search">
+                    <i class="fa-solid fa-list-ol text-lg"></i>
+                </button>
+                <button onclick="openJellyfinModal()" class="text-white/40 hover:text-purple-400 transition-colors" title="Configure Jellyfin">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center gap-6 relative z-10">
+                <div class="w-32 h-32 bg-black/40 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 relative shadow-xl mx-auto md:mx-0">
+                    <img id="jf-art" src="https://svgshare.com/i/y1m.svg" class="w-full h-full object-cover opacity-80 transition-opacity duration-300" alt="Album Art">
+                    <div id="jf-playing-indicator" class="absolute inset-0 bg-black/50 flex items-center justify-center hidden backdrop-blur-sm">
+                        <i class="fa-solid fa-chart-simple text-purple-400 animate-pulse text-3xl"></i>
+                    </div>
+                </div>
+                
+                <div class="flex-grow min-w-0 flex flex-col justify-center">
+                    <h2 class="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1 flex items-center gap-2 justify-center md:justify-start drop-shadow-md">
+                        <i class="fa-solid fa-headphones"></i> Local Web Player
+                    </h2>
+                    <div id="jf-title" class="text-2xl font-extrabold text-white truncate drop-shadow-sm leading-tight text-center md:text-left">Player Initializing</div>
+                    <div id="jf-artist" class="text-sm font-medium text-white/60 truncate mt-1 mb-4 text-center md:text-left">Please wait or check settings...</div>
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-6 justify-between">
+                        <div class="flex items-center gap-5 text-white/80">
+                            <button onclick="prevLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Previous Track">
+                                <i class="fa-solid fa-backward-step text-lg"></i>
+                            </button>
+                            <button onclick="toggleLocalPlay()" class="w-12 h-12 bg-purple-500 hover:bg-purple-400 text-white rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-105 active:scale-95 outline-none" title="Play / Pause">
+                                <i id="jf-play-icon" class="fa-solid fa-play ml-1 text-lg"></i>
+                            </button>
+                            <button onclick="nextLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Next Track">
+                                <i class="fa-solid fa-forward-step text-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 bg-black/20 px-4 py-2 rounded-xl border border-white/5 w-full sm:w-auto justify-center">
+                            <i id="vol-icon" class="fa-solid fa-volume-high text-xs text-white/60 w-4"></i>
+                            <input type="range" min="0" max="1" step="0.01" value="1" oninput="setLocalVolume(this.value)" class="native-slider vol-slider w-24">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 mt-4">
+                        <span id="jf-time-current" class="text-[10px] font-semibold text-white/50 w-8 text-right font-mono">0:00</span>
+                        
+                        <input type="range" min="0" max="100" value="0" step="0.1" id="jf-time-range" class="native-slider time-slider flex-grow" oninput="handleSliderDrag(this.value)" onchange="seekLocalTrackFromSlider(this.value)">
+                        
+                        <span id="jf-time-total" class="text-[10px] font-semibold text-white/50 w-8 font-mono">0:00</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="jf-queue-panel" class="mt-6 pt-6 border-t border-white/10 hidden grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10 max-h-[400px] overflow-y-auto">
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search Track Library
+                    </h3>
+                    <div class="relative">
+                        <input type="text" id="jf-search-input" oninput="searchJellyfinTracks(this.value)" placeholder="Search songs, artists, albums..." class="w-full bg-black/20 border border-white/10 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-400 text-white placeholder-white/30">
+                    </div>
+                    <div id="jf-search-results" class="space-y-1.5 max-h-[280px] overflow-y-auto pr-1">
+                        <p class="text-xs text-white/40 italic p-2">Type above to search your music collection...</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ul"></i> What's Up Next
+                    </h3>
+                    <div id="jf-queue-list" class="space-y-1.5 max-h-[320px] overflow-y-auto pr-1">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="feed" class="glass p-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fa-regular fa-newspaper text-pink-400"></i> Media Stream Updates
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
+                    <div class="h-44 bg-slate-900 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <i class="fa-brands fa-youtube text-5xl text-red-500 drop-shadow-lg group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">Orchestrating Environments</h3>
+                        <p class="text-xs text-white/70 line-clamp-2">A dive into declarations, isolation logic, networking profiles, and secure mounting paradigms.</p>
+                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
+                            <span>SysAdmin Core</span>
+                            <span>2 Hours Ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
+                    <div class="h-44 bg-slate-900 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <i class="fa-solid fa-network-wired text-5xl text-cyan-400 drop-shadow-lg group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">The Self-Hosting Architecture</h3>
+                        <p class="text-xs text-white/70 line-clamp-2">How local containerization infrastructures are changing data control protocols.</p>
+                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
+                            <span>Homelab Gazette</span>
+                            <span>5 Hours Ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
+                    <div class="h-44 bg-slate-900 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <i class="fa-brands fa-github text-5xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">Top Dashboards & Tooling</h3>
+                        <p class="text-xs text-white/70 line-clamp-2">Curated analysis of UI frontends designed for consolidated cluster visibility.</p>
+                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
+                            <span>OSS Metrics</span>
+                            <span>1 Day Ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="service-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
+        <div class="glass-modal p-6 rounded-3xl w-full max-w-md border border-white/20 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-bottom border-white/10 pb-2">
+                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-circle-plus text-cyan-400"></i> New Service</h3>
+                <button onclick="closeServiceModal()" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Service Name</label>
+                    <input type="text" id="svc-name" placeholder="e.g. Plex, Home Assistant" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Target Connection URL</label>
+                    <input type="text" id="svc-link" placeholder="https://plex.localdomain" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Icon Strategy</label>
+                    <select id="svc-icon-type" onchange="toggleIconField()" class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 text-white [&>option]:bg-slate-800">
+                        <option value="auto">Automatic Lookup Strategy</option>
+                        <option value="fa">FontAwesome Vector String</option>
+                        <option value="url">Direct Web Asset URL Image</option>
+                    </select>
+                </div>
+                <div id="custom-icon-wrapper" class="hidden">
+                    <label id="icon-input-label" class="block text-xs font-semibold uppercase text-white/60 mb-1">Icon Target value</label>
+                    <input type="text" id="svc-icon-val" placeholder="fa-brands fa-plex" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 text-white">
+                </div>
+            </div>
+            <div class="pt-2 flex justify-end gap-2">
+                <button onclick="closeServiceModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white/5 hover:bg-white/10 transition-all">Cancel</button>
+                <button onclick="saveService()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:brightness-110 transition-all">Register Asset</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="jf-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
+        <div class="glass-modal p-6 rounded-3xl w-full max-w-md border border-white/20 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-bottom border-white/10 pb-2">
+                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-server text-purple-400"></i> Jellyfin Connection</h3>
+                <button onclick="closeJellyfinModal()" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Server URL</label>
+                    <input type="text" id="jf-url" placeholder="http://192.168.178.166:8096" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-400 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">API Key</label>
+                    <input type="password" id="jf-apikey" placeholder="Enter Jellyfin API Key" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-400 text-white">
+                    <p class="text-[10px] text-white/40 mt-1 mt-2">Generate an API key in Jellyfin Dashboard > Advanced > API Keys.</p>
+                </div>
+            </div>
+            <div class="pt-2 flex justify-end gap-2">
+                <button onclick="closeJellyfinModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white/5 hover:bg-white/10 transition-all">Cancel</button>
+                <button onclick="saveJellyfinConfig()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:brightness-110 transition-all shadow-lg">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="weather-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
+        <div class="glass-modal p-6 rounded-3xl w-full max-w-3xl border border-white/20 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-chart-line text-amber-400"></i> Meteorological Deep-Dive</h3>
+                    <p class="text-xs text-white/60 mt-0.5">Lingen Station coordinates context parameters</p>
+                </div>
+                <button onclick="closeWeatherModal()" class="text-white/60 hover:text-white bg-white/5 p-2 rounded-xl transition-all"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center text-center">
+                    <i class="fa-solid fa-temperature-three-quarters text-xl text-orange-400 mb-1"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-white/50">Apparent Temp</span>
+                    <span id="wx-apparent" class="text-lg font-bold mt-1">--°C</span>
+                </div>
+                <div class="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center text-center">
+                    <i class="fa-solid fa-cloud-showers-heavy text-xl text-blue-400 mb-1"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-white/50">Precipitation Pct</span>
+                    <span id="wx-precip" class="text-lg font-bold mt-1">--%</span>
+                </div>
+                <div class="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center text-center">
+                    <i class="fa-solid fa-gauge-simple-high text-xl text-emerald-400 mb-1"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-white/50">Surface Pressure</span>
+                    <span id="wx-pressure" class="text-lg font-bold mt-1">-- hPa</span>
+                </div>
+                <div class="bg-white/5 border border-white/5 p-4 rounded-2xl flex flex-col items-center text-center">
+                    <i class="fa-solid fa-eye text-xl text-purple-400 mb-1"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-white/50">Visibility Radius</span>
+                    <span id="wx-visibility" class="text-lg font-bold mt-1">-- km</span>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-white/60 mb-3 flex items-center gap-2">
+                    <i class="fa-regular fa-clock"></i> 24-Hour Timeline Horizon
+                </h4>
+                <div id="wx-hourly-container" class="flex gap-3 overflow-x-auto pb-2 snap-x"></div>
+            </div>
+
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-white/60 mb-3 flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-days"></i> 7-Day Matrix Array
+                </h4>
+                <div id="wx-daily-container" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_SERVICES = [
+            { name: 'Plex', link: '#', type: 'auto', iconVal: '' },
+            { name: 'Nextcloud', link: '#', type: 'auto', iconVal: '' },
+            { name: 'Pi-hole', link: '#', type: 'auto', iconVal: '' },
+            { name: 'Portainer', link: '#', type: 'auto', iconVal: '' }
+        ];
+
+        let services = JSON.parse(localStorage.getItem('dashboard_services')) || DEFAULT_SERVICES;
+        let jfConfig = JSON.parse(localStorage.getItem('dashboard_jf_config')) || { url: '', apiKey: '' };
+        let activeWeatherData = null;
+        
+        let localQueue = [];
+        let currentTrackIndex = 0;
+        let localPlayer = new Audio();
+        let isPlayingLocally = false;
+        let jfUserId = null;
+        let searchTimeout = null;
+        let isDraggingSlider = false; // Flag to pause auto-updates while seeking
+
+        // Ensure variables and functions attach firmly to window for HTML event handlers
+        window.openJellyfinModal = openJellyfinModal;
+        window.closeJellyfinModal = closeJellyfinModal;
+        window.saveJellyfinConfig = saveJellyfinConfig;
+        window.toggleLocalPlay = toggleLocalPlay;
+        window.prevLocalTrack = prevLocalTrack;
+        window.nextLocalTrack = nextLocalTrack;
+        window.setLocalVolume = setLocalVolume;
+        window.toggleQueuePanel = toggleQueuePanel;
+        window.searchJellyfinTracks = searchJellyfinTracks;
+        window.jumpToTrack = jumpToTrack;
+        window.moveTrack = moveTrack;
+        window.removeTrackFromQueue = removeTrackFromQueue;
+        window.addTrackToQueue = addTrackToQueue;
+        window.openServiceModal = openServiceModal;
+        window.closeServiceModal = closeServiceModal;
+        window.saveService = saveService;
+        window.deleteService = deleteService;
+        window.toggleIconField = toggleIconField;
+        window.openWeatherModal = openWeatherModal;
+        window.closeWeatherModal = closeWeatherModal;
+        window.handleSliderDrag = handleSliderDrag;
+        window.seekLocalTrackFromSlider = seekLocalTrackFromSlider;
+
+        function getAutoIconMarkup(name) {
+            const token = name.toLowerCase().trim();
+            if (token.includes('plex')) return `<i class="fa-brands fa-plex text-4xl text-amber-500 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('nextcloud')) return `<i class="fa-solid fa-cloud text-4xl text-sky-400 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('pi-hole') || token.includes('pihole')) return `<i class="fa-solid fa-shield-halved text-4xl text-emerald-400 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('portainer') || token.includes('docker')) return `<i class="fa-brands fa-docker text-4xl text-blue-500 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('home assistant') || token.includes('homeassistant') || token.includes('hass')) return `<i class="fa-solid fa-house-laptop text-4xl text-cyan-400 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('jellyfin') || token.includes('jellybin')) return `<i class="fa-solid fa-film text-4xl text-purple-400 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('qbittorrent') || token.includes('torrent')) return `<i class="fa-solid fa-download text-4xl text-sky-500 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('proxmox')) return `<i class="fa-solid fa-server text-4xl text-orange-500 transition-transform group-hover:scale-110"></i>`;
+            if (token.includes('homarr')) return `<i class="fa-solid fa-grip text-4xl text-indigo-400 transition-transform group-hover:scale-110"></i>`;
+            return `<i class="fa-solid fa-globe text-4xl text-slate-300 transition-transform group-hover:scale-110"></i>`;
+        }
+
+        function resolveIconHTML(item) {
+            if (item.type === 'auto') return getAutoIconMarkup(item.name);
+            if (item.type === 'fa') return `<i class="${item.iconVal || 'fa-solid fa-cube'} text-4xl text-cyan-400 transition-transform group-hover:scale-110"></i>`;
+            if (item.type === 'url') return `<img src="${item.iconVal}" class="w-10 h-10 object-contain rounded-lg transition-transform group-hover:scale-110" onerror="this.src='https://svgshare.com/i/y1m.svg'">`;
+            return getAutoIconMarkup(item.name);
+        }
+
+        function renderServices() {
+            const container = document.getElementById('services-grid');
+            container.innerHTML = '';
+            services.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'relative group/card';
+                card.innerHTML = `
+                    <a href="${item.link}" target="_blank" class="flex flex-col items-center justify-center p-5 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all h-full text-center shadow-sm">
+                        ${resolveIconHTML(item)}
+                        <span class="font-medium text-sm tracking-wide mt-3 truncate w-full px-1 text-white/90">${item.name}</span>
+                    </a>
+                    <button onclick="deleteService(${index})" class="absolute -top-1.5 -right-1.5 bg-red-500/80 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center border border-white/20 shadow opacity-0 group-hover/card:opacity-100 transition-opacity z-10 focus:outline-none">
+                        <i class="fa-solid fa-minus text-[10px]"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+            localStorage.setItem('dashboard_services', JSON.stringify(services));
+        }
+
+        function openServiceModal() {
+            const el = document.getElementById('service-modal');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.remove('opacity-0'), 10);
+        }
+
+        function closeServiceModal() {
+            const el = document.getElementById('service-modal');
+            el.classList.add('opacity-0');
+            setTimeout(() => {
+                el.classList.add('hidden');
+                document.getElementById('svc-name').value = '';
+                document.getElementById('svc-link').value = '';
+                document.getElementById('svc-icon-val').value = '';
+                document.getElementById('svc-icon-type').value = 'auto';
+                toggleIconField();
+            }, 300);
+        }
+
+        function toggleIconField() {
+            const val = document.getElementById('svc-icon-type').value;
+            const wrapper = document.getElementById('custom-icon-wrapper');
+            const lbl = document.getElementById('icon-input-label');
+            if (val === 'auto') {
+                wrapper.classList.add('hidden');
+            } else {
+                wrapper.classList.remove('hidden');
+                lbl.innerText = val === 'fa' ? "FontAwesome CSS classes" : "Target Icon Asset Image Location URL";
+            }
+        }
+
+        function saveService() {
+            const name = document.getElementById('svc-name').value.trim();
+            const link = document.getElementById('svc-link').value.trim() || '#';
+            const type = document.getElementById('svc-icon-type').value;
+            const iconVal = document.getElementById('svc-icon-val').value.trim();
+            if (!name) return alert('Service Name required.');
+            services.push({ name, link, type, iconVal });
+            renderServices();
+            closeServiceModal();
+        }
+
+        function deleteService(index) {
+            services.splice(index, 1);
+            renderServices();
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // --- NEW SLIDER DRAG & SEEK LOGIC ---
+        function handleSliderDrag(value) {
+            isDraggingSlider = true;
+            // Update the CSS variable to paint the slider track while dragging
+            document.getElementById('jf-time-range').style.setProperty('--progress', `${value}%`);
+            
+            // Preview the time text while dragging
+            if (localPlayer.duration && isFinite(localPlayer.duration)) {
+                const targetTime = (value / 100) * localPlayer.duration;
+                document.getElementById('jf-time-current').innerText = formatTime(targetTime);
+            }
+        }
+
+        function seekLocalTrackFromSlider(value) {
+            if (localPlayer.duration && isFinite(localPlayer.duration)) {
+                localPlayer.currentTime = (value / 100) * localPlayer.duration;
+            }
+            isDraggingSlider = false;
+        }
+
+        function toggleQueuePanel() {
+            const panel = document.getElementById('jf-queue-panel');
+            panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) renderQueueUI();
+        }
+
+        function setLocalVolume(val) {
+            localPlayer.volume = val;
+            const icon = document.getElementById('vol-icon');
+            if (val == 0) icon.className = "fa-solid fa-volume-xmark text-purple-400 w-4";
+            else if (val < 0.4) icon.className = "fa-solid fa-volume-low text-white/60 w-4";
+            else icon.className = "fa-solid fa-volume-high text-white/60 w-4";
+        }
+
+        function openJellyfinModal() {
+            document.getElementById('jf-url').value = jfConfig.url;
+            document.getElementById('jf-apikey').value = jfConfig.apiKey;
+            const el = document.getElementById('jf-modal');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.remove('opacity-0'), 10);
+        }
+
+        function closeJellyfinModal() {
+            const el = document.getElementById('jf-modal');
+            el.classList.add('opacity-0');
+            setTimeout(() => el.classList.add('hidden'), 300);
+        }
+
+        function saveJellyfinConfig() {
+            jfConfig.url = document.getElementById('jf-url').value.trim().replace(/\/$/, '');
+            jfConfig.apiKey = document.getElementById('jf-apikey').value.trim();
+            localStorage.setItem('dashboard_jf_config', JSON.stringify(jfConfig));
+            closeJellyfinModal();
+            initLocalPlayer();
+        }
+
+        async function fetchUserItems(userId) {
+            const res = await fetch(`${jfConfig.url}/Users/${userId}/Items?IncludeItemTypes=Audio&Recursive=true&Limit=50&SortBy=Random&api_key=${jfConfig.apiKey}`);
+            const data = await res.json();
+            return data.Items || [];
+        }
+
+        async function initLocalPlayer() {
+            if (!jfConfig.url || !jfConfig.apiKey) return;
+            document.getElementById('jf-title').innerText = "Connecting...";
+            try {
+                const userRes = await fetch(`${jfConfig.url}/Users?api_key=${jfConfig.apiKey}`);
+                if (!userRes.ok) throw new Error(`Status: ${userRes.status}`);
+                const users = await userRes.json();
+                
+                if (users && users.length > 0) {
+                    let foundItems = [];
+                    const adminUser = users.find(u => u.Policy && u.Policy.IsAdministrator);
+                    if (adminUser) {
+                        jfUserId = adminUser.Id;
+                        foundItems = await fetchUserItems(jfUserId);
+                    }
+                    if (foundItems.length === 0) {
+                        for (let u of users) {
+                            if (adminUser && u.Id === adminUser.Id) continue;
+                            const items = await fetchUserItems(u.Id);
+                            if (items.length > 0) {
+                                jfUserId = u.Id;
+                                foundItems = items;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (foundItems.length > 0) {
+                        localQueue = foundItems;
+                        currentTrackIndex = 0;
+                        document.getElementById('jf-title').innerText = "Ready to Play";
+                        document.getElementById('jf-artist').innerText = `${localQueue.length} tracks found.`;
+                        renderQueueUI();
+                    } else {
+                        document.getElementById('jf-title').innerText = "No Music Found";
+                        document.getElementById('jf-artist').innerText = "Ensure your Jellyfin user has library access.";
+                        localQueue = [];
+                    }
+                }
+            } catch (err) {
+                console.error("Local Player Init Error:", err);
+                document.getElementById('jf-title').innerText = "Connection Failed";
+                document.getElementById('jf-artist').innerText = "Check CORS or API Key.";
+                localQueue = [];
+            }
+        }
+
+        function loadTrackIntoUI(item) {
+            document.getElementById('jf-title').innerText = item.Name || "Unknown Track";
+            document.getElementById('jf-artist').innerText = (item.Artists && item.Artists.join(', ')) || item.Album || "Unknown Artist";
+            document.getElementById('jf-art').src = `${jfConfig.url}/Items/${item.Id}/Images/Primary?api_key=${jfConfig.apiKey}&maxHeight=200`;
+            
+            // Reset Native Slider UI
+            const timeRange = document.getElementById('jf-time-range');
+            timeRange.value = 0;
+            timeRange.style.setProperty('--progress', '0%');
+            document.getElementById('jf-time-current').innerText = "0:00";
+            
+            let totalSeconds = item.RunTimeTicks ? item.RunTimeTicks / 10000000 : 0;
+            document.getElementById('jf-time-total').innerText = formatTime(totalSeconds);
+
+            localPlayer.src = `${jfConfig.url}/Audio/${item.Id}/universal?api_key=${jfConfig.apiKey}&UserId=${jfUserId}&Container=mp3&AudioCodec=mp3`;
+            if (isPlayingLocally) localPlayer.play();
+            renderQueueUI();
+        }
+
+        function toggleLocalPlay() {
+            if (localQueue.length === 0) return alert('No tracks are loaded in the active queue.');
+            if (localPlayer.paused) {
+                if (!localPlayer.src || localPlayer.src === window.location.href) {
+                    loadTrackIntoUI(localQueue[currentTrackIndex]);
+                }
+                localPlayer.play();
+                isPlayingLocally = true;
+                document.getElementById('jf-play-icon').className = 'fa-solid fa-pause text-lg';
+                document.getElementById('jf-playing-indicator').classList.remove('hidden');
+            } else {
+                localPlayer.pause();
+                isPlayingLocally = false;
+                document.getElementById('jf-play-icon').className = 'fa-solid fa-play ml-1 text-lg';
+                document.getElementById('jf-playing-indicator').classList.add('hidden');
+            }
+        }
+
+        function nextLocalTrack() {
+            if (localQueue.length === 0) return;
+            currentTrackIndex++;
+            if (currentTrackIndex >= localQueue.length) currentTrackIndex = 0;
+            loadTrackIntoUI(localQueue[currentTrackIndex]);
+        }
+
+        function prevLocalTrack() {
+            if (localQueue.length === 0) return;
+            currentTrackIndex--;
+            if (currentTrackIndex < 0) currentTrackIndex = localQueue.length - 1;
+            loadTrackIntoUI(localQueue[currentTrackIndex]);
+        }
+
+        function renderQueueUI() {
+            const container = document.getElementById('jf-queue-list');
+            container.innerHTML = '';
+            if (localQueue.length === 0) {
+                container.innerHTML = `<p class="text-xs text-white/30 italic p-2">Playback sequence is currently empty.</p>`;
+                return;
+            }
+            
+            localQueue.forEach((item, index) => {
+                const isCurrent = index === currentTrackIndex;
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${isCurrent ? 'bg-purple-500/30 border border-purple-500/20' : 'bg-white/5 hover:bg-white/10'}`;
+                row.innerHTML = `
+                    <div class="flex items-center gap-2 min-w-0 flex-grow cursor-pointer" onclick="jumpToTrack(${index})">
+                        <span class="w-4 text-center font-bold opacity-40">${index + 1}</span>
+                        <div class="truncate">
+                            <div class="font-semibold text-white truncate">${item.Name}</div>
+                            <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Various Artists'}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 ml-2">
+                        <button onclick="moveTrack(${index}, -1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+                        <button onclick="moveTrack(${index}, 1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+                        <button onclick="removeTrackFromQueue(${index})" class="p-1 text-white/40 hover:text-red-400 transition-colors" title="Remove"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function jumpToTrack(index) {
+            currentTrackIndex = index;
+            isPlayingLocally = true;
+            document.getElementById('jf-play-icon').className = 'fa-solid fa-pause text-lg';
+            document.getElementById('jf-playing-indicator').classList.remove('hidden');
+            loadTrackIntoUI(localQueue[currentTrackIndex]);
+        }
+
+        function moveTrack(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= localQueue.length) return;
+            const temp = localQueue[index];
+            localQueue[index] = localQueue[targetIndex];
+            localQueue[targetIndex] = temp;
+            if (currentTrackIndex === index) currentTrackIndex = targetIndex;
+            else if (currentTrackIndex === targetIndex) currentTrackIndex = index;
+            renderQueueUI();
+        }
+
+        function removeTrackFromQueue(index) {
+            localQueue.splice(index, 1);
+            if (currentTrackIndex >= localQueue.length && localQueue.length > 0) {
+                currentTrackIndex = localQueue.length - 1;
+            }
+            if (localQueue.length === 0) {
+                localPlayer.pause();
+                localPlayer.src = "";
+                isPlayingLocally = false;
+                document.getElementById('jf-play-icon').className = 'fa-solid fa-play ml-1 text-lg';
+                document.getElementById('jf-playing-indicator').classList.add('hidden');
+                document.getElementById('jf-title').innerText = "Queue Empty";
+                document.getElementById('jf-artist').innerText = "Add more music to play.";
+                document.getElementById('jf-time-range').value = 0;
+                document.getElementById('jf-time-range').style.setProperty('--progress', '0%');
+                document.getElementById('jf-time-current').innerText = "0:00";
+                document.getElementById('jf-time-total').innerText = "0:00";
+            } else if (currentTrackIndex === index) {
+                loadTrackIntoUI(localQueue[currentTrackIndex]);
+            }
+            renderQueueUI();
+        }
+
+        function searchJellyfinTracks(query) {
+            clearTimeout(searchTimeout);
+            if (!query.trim()) {
+                document.getElementById('jf-search-results').innerHTML = `<p class="text-xs text-white/40 italic p-2">Type above to search your music collection...</p>`;
+                return;
+            }
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${jfConfig.url}/Users/${jfUserId}/Items?SearchTerm=${encodeURIComponent(query)}&IncludeItemTypes=Audio&Recursive=true&Limit=10&api_key=${jfConfig.apiKey}`);
+                    const data = await res.json();
+                    renderSearchResults(data.Items || []);
+                } catch (err) {
+                    console.error("Search pipeline error:", err);
+                }
+            }, 350);
+        }
+
+        function renderSearchResults(items) {
+            const container = document.getElementById('jf-search-results');
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = `<p class="text-xs text-white/40 italic p-2">No matching tracks discovered.</p>`;
+                return;
+            }
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs transition-colors group";
+                card.innerHTML = `
+                    <div class="truncate min-w-0 flex-grow pr-2">
+                        <div class="font-semibold text-white truncate">${item.Name}</div>
+                        <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Unknown Artist'}</div>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, true)' class="bg-purple-600/50 hover:bg-purple-500 text-white px-2.5 py-1 rounded-lg font-medium transition-all" title="Play Now">Play</button>
+                        <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, false)' class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition-all" title="Add to Queue"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addTrackToQueue(item, playImmediately) {
+            localQueue.push(item);
+            renderQueueUI();
+            if (playImmediately) {
+                currentTrackIndex = localQueue.length - 1;
+                isPlayingLocally = true;
+                document.getElementById('jf-play-icon').className = 'fa-solid fa-pause text-lg';
+                document.getElementById('jf-playing-indicator').classList.remove('hidden');
+                loadTrackIntoUI(item);
+            } else if (localQueue.length === 1) {
+                loadTrackIntoUI(item);
+            }
+        }
+
+        // --- HTML5 AUDIO EVENT LISTENERS WITH NATIVE SLIDER SYNC ---
+        localPlayer.addEventListener('timeupdate', () => {
+            if (localPlayer.duration && isFinite(localPlayer.duration) && !isDraggingSlider) {
+                const percent = (localPlayer.currentTime / localPlayer.duration) * 100;
+                const timeRange = document.getElementById('jf-time-range');
+                timeRange.value = percent;
+                timeRange.style.setProperty('--progress', `${percent}%`);
+                document.getElementById('jf-time-current').innerText = formatTime(localPlayer.currentTime);
+            }
+        });
+        
+        localPlayer.addEventListener('loadedmetadata', () => {
+            if (localPlayer.duration && isFinite(localPlayer.duration)) {
+                document.getElementById('jf-time-total').innerText = formatTime(localPlayer.duration);
+            }
+        });
+
+        localPlayer.addEventListener('ended', nextLocalTrack);
+
+        // --- OPEN-METEO WEATHER ENGINE PROTOCOLS ---
+        const WEATHER_CODE_INDEX = {
+            0: { desc: 'Clear sky', icon: 'fa-sun', color: 'text-yellow-300' },
+            1: { desc: 'Mainly clear', icon: 'fa-sun', color: 'text-yellow-200' },
+            2: { desc: 'Partly cloudy', icon: 'fa-cloud-sun', color: 'text-slate-200' },
+            3: { desc: 'Overcast', icon: 'fa-cloud', color: 'text-slate-400' },
+            45: { desc: 'Foggy conditions', icon: 'fa-smog', color: 'text-slate-300' },
+            48: { desc: 'Depositing rime fog', icon: 'fa-smog', color: 'text-slate-400' },
+            51: { desc: 'Light drizzle', icon: 'fa-cloud-rain', color: 'text-sky-300' },
+            61: { desc: 'Slight rain', icon: 'fa-cloud-showers-heavy', color: 'text-sky-400' },
+            71: { desc: 'Slight snow', icon: 'fa-snowflake', color: 'text-blue-200' },
+            95: { desc: 'Thunderstorm', icon: 'fa-cloud-bolt', color: 'text-amber-400' }
+        };
+
+        async function fetchWeather() {
+            try {
+                const apiURL = 'https://api.open-meteo.com/v1/forecast?latitude=52.5233&longitude=7.3172&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,surface_pressure,visibility&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto';
+                const res = await fetch(apiURL);
+                activeWeatherData = await res.json();
+                if (activeWeatherData && activeWeatherData.current_weather) {
+                    const current = activeWeatherData.current_weather;
+                    document.getElementById('weather-temp').innerText = Math.round(current.temperature);
+                    document.getElementById('weather-wind').innerText = current.windspeed + ' km/h';
+                    document.getElementById('weather-humidity').innerText = (activeWeatherData.hourly.relativehumidity_2m[new Date().getHours()] || '--') + ' %';
+                    const lookup = WEATHER_CODE_INDEX[current.weathercode] || { desc: 'Unclassified', icon: 'fa-cloud-sun', color: 'text-white' };
+                    document.getElementById('weather-desc').innerText = lookup.desc;
+                    document.getElementById('weather-main-icon-container').innerHTML = `<i id="weather-icon" class="fa-solid ${lookup.icon} text-5xl mb-4 ${lookup.color} drop-shadow-md transition-all"></i>`;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function openWeatherModal() {
+            if (!activeWeatherData) return alert('Metrics registry down.');
+            const el = document.getElementById('weather-modal');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.remove('opacity-0'), 10);
+            const hrIdx = new Date().getHours();
+            document.getElementById('wx-apparent').innerText = `${Math.round(activeWeatherData.hourly.apparent_temperature[hrIdx])}°C`;
+            document.getElementById('wx-precip').innerText = `${activeWeatherData.hourly.precipitation_probability[hrIdx]}%`;
+            document.getElementById('wx-pressure').innerText = `${Math.round(activeWeatherData.hourly.surface_pressure[hrIdx])} hPa`;
+            document.getElementById('wx-visibility').innerText = `${(activeWeatherData.hourly.visibility[hrIdx] / 1000).toFixed(1)} km`;
+
+            const hourlyContainer = document.getElementById('wx-hourly-container');
+            hourlyContainer.innerHTML = '';
+            for (let i = hrIdx; i < hrIdx + 24; i++) {
+                if (!activeWeatherData.hourly.temperature_2m[i]) break;
+                const dateObj = new Date(activeWeatherData.hourly.time[i]);
+                hourlyContainer.innerHTML += `
+                    <div class="min-w-[75px] bg-white/5 border border-white/5 p-3 rounded-xl flex flex-col items-center snap-center text-center text-xs flex-shrink-0">
+                        <span class="opacity-60 text-[10px] font-medium">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span class="font-bold text-sm my-1.5">${Math.round(activeWeatherData.hourly.temperature_2m[i])}°</span>
+                        <span class="text-[10px] text-cyan-300 font-semibold flex items-center gap-0.5"><i class="fa-solid fa-droplet text-[8px]"></i>${activeWeatherData.hourly.precipitation_probability[i]}%</span>
+                    </div>`;
+            }
+
+            const dailyContainer = document.getElementById('wx-daily-container');
+            dailyContainer.innerHTML = '';
+            activeWeatherData.daily.time.forEach((dayStr, i) => {
+                const lookup = WEATHER_CODE_INDEX[activeWeatherData.daily.weathercode[i]] || { desc: 'Variable', icon: 'fa-cloud-sun', color: 'text-white' };
+                dailyContainer.innerHTML += `
+                    <div class="bg-white/5 border border-white/5 px-4 py-3 rounded-xl flex items-center justify-between text-xs sm:text-sm">
+                        <span class="font-medium w-1/3 truncate text-white/80">${new Date(dayStr).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                        <div class="flex items-center gap-2 w-1/3 justify-center text-white/90">
+                            <i class="fa-solid ${lookup.icon} ${lookup.color} text-base w-6 text-center"></i>
+                            <span class="text-xs hidden sm:inline opacity-70">${lookup.desc}</span>
+                        </div>
+                        <div class="w-1/3 text-right font-semibold space-x-2">
+                            <span class="text-amber-300">${Math.round(activeWeatherData.daily.temperature_2m_max[i])}°</span>
+                            <span class="text-blue-300 opacity-60">${Math.round(activeWeatherData.daily.temperature_2m_min[i])}°</span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function closeWeatherModal() {
+            const el = document.getElementById('weather-modal');
+            el.classList.add('opacity-0');
+            setTimeout(() => el.classList.add('hidden'), 300);
+        }
+
+        // --- LIFE-CYCLE INIT RUNTIME TRIGGERS ---
+        renderServices();
+        fetchWeather();
+        initLocalPlayer();
+        setInterval(fetchWeather, 1800000);
+    </script>
+</body>
+</html>

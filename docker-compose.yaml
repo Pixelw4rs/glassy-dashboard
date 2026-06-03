@@ -1,0 +1,10 @@
+services:
+  dashboard:
+    # 'build: .' tells compose to use the Dockerfile in this directory
+    build: .
+    container_name: glassy-dashboard
+    # You can name your image whatever you like
+    image: my-glassy-dashboard:local
+    ports:
+      - "8585:80"
+    restart: unless-stopped
