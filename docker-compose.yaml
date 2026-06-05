@@ -4,7 +4,7 @@ services:
     build: .
     container_name: glassy-dashboard
     # You can name your image whatever you like
-    image: my-glassy-dashboard:local
+    image: ghcr.io/pixelw4rs/glassy-dashboard:latest
     ports:
       - "8585:80"
     restart: unless-stopped

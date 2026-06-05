@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glassy Dashboard</title>
+    <title>Glassy Dashboard Suite</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -42,7 +44,6 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        /* Reusable Native Slider Styling for Volume & Time */
         .native-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -53,7 +54,6 @@
             transition: background 0.2s;
         }
         
-        /* Time Slider Dynamic Fill Trick using CSS Variables */
         .time-slider {
             background: linear-gradient(to right, #a855f7 var(--progress, 0%), rgba(255,255,255,0.2) var(--progress, 0%));
         }
@@ -74,7 +74,6 @@
             background: #a855f7;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
@@ -83,204 +82,249 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
-    <nav class="glass-nav fixed w-full z-40 top-0">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-circle-nodes text-2xl text-cyan-400 drop-shadow-md"></i>
-                    <span class="font-bold text-xl tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Workspace</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-2">
-                    <a href="#services" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Services</a>
-                    <a href="#weather" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Weather</a>
-                    <a href="#music" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Music Suite</a>
-                    <a href="#feed" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Feeds</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full space-y-8">
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <section id="services" class="lg:col-span-2 glass p-8 flex flex-col relative group/section">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold flex items-center gap-3">
-                        <i class="fa-solid fa-cubes text-blue-400"></i> Apps & Services
-                    </h2>
-                    <button onclick="openServiceModal()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-white/10 transition-all active:scale-95">
-                        <i class="fa-solid fa-plus text-cyan-400"></i> Add Service
-                    </button>
-                </div>
-                <div id="services-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 flex-grow"></div>
-            </section>
-
-            <section id="weather" class="glass p-8 flex flex-col justify-between relative">
-                <div class="flex justify-between items-start">
-                    <h2 class="text-2xl font-bold flex items-center gap-3">
-                        <i class="fa-solid fa-cloud-sun text-amber-400"></i> Weather
-                    </h2>
-                    <button onclick="openWeatherModal()" class="bg-white/10 hover:bg-white/20 text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/10 transition-all flex items-center gap-1.5 active:scale-95">
-                        Expand <i class="fa-solid fa-expand text-[10px]"></i>
-                    </button>
-                </div>
-                <div class="flex-grow flex flex-col items-center justify-center my-6">
-                    <div id="weather-main-icon-container">
-                        <i id="weather-icon" class="fa-solid fa-circle-notch fa-spin text-5xl mb-4 text-white/50"></i>
-                    </div>
-                    <div class="text-6xl font-extrabold tracking-tighter drop-shadow"><span id="weather-temp">--</span>°C</div>
-                    <div id="weather-desc" class="text-sm mt-2 font-medium tracking-wide text-white/70">Updating forecast...</div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 text-xs bg-black/20 p-3.5 rounded-2xl border border-white/5">
-                    <div class="flex items-center gap-2 justify-center">
-                        <i class="fa-solid fa-wind text-cyan-300"></i>
-                        <span id="weather-wind">-- km/h</span>
-                    </div>
-                    <div class="flex items-center gap-2 justify-center">
-                        <i class="fa-solid fa-droplet text-blue-400"></i>
-                        <span id="weather-humidity">-- %</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <section id="music" class="glass p-6 relative group/jf overflow-hidden transition-all duration-500">
-            <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/20 blur-3xl rounded-full pointer-events-none"></div>
+    <!-- ACCOUNT SECURITY PORTAL OVERLAY (Gatekeeper view node) -->
+    <div id="account-gateway" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-xl transition-all duration-500">
+        <div class="glass max-w-md w-full p-8 text-center space-y-6 border border-white/20 shadow-2xl relative overflow-hidden">
+            <div class="absolute -left-16 -top-16 w-36 h-36 bg-cyan-500/20 blur-2xl rounded-full"></div>
+            <div class="absolute -right-16 -bottom-16 w-36 h-36 bg-purple-500/20 blur-2xl rounded-full"></div>
             
-            <div class="absolute top-4 right-4 flex items-center gap-4 z-10">
-                <button onclick="toggleQueuePanel()" class="text-white/40 hover:text-purple-400 transition-colors" title="Toggle Queue & Search">
-                    <i class="fa-solid fa-list-ol text-lg"></i>
-                </button>
-                <button onclick="openJellyfinModal()" class="text-white/40 hover:text-purple-400 transition-colors" title="Configure Jellyfin">
-                    <i class="fa-solid fa-gear text-lg"></i>
-                </button>
+            <div class="relative z-10">
+                <i class="fa-solid fa-fingerprint text-5xl text-purple-400 drop-shadow-md mb-2 animate-pulse"></i>
+                <h1 class="text-2xl font-extrabold tracking-wide uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Identity Vault</h1>
+                <p class="text-xs text-white/50">Select an access key profile profile to enter dashboard metrics</p>
             </div>
 
-            <div class="flex flex-col md:flex-row md:items-center gap-6 relative z-10">
-                <div class="w-32 h-32 bg-black/40 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 relative shadow-xl mx-auto md:mx-0">
-                    <img id="jf-art" src="https://svgshare.com/i/y1m.svg" class="w-full h-full object-cover opacity-80 transition-opacity duration-300" alt="Album Art">
-                    <div id="jf-playing-indicator" class="absolute inset-0 bg-black/50 flex items-center justify-center hidden backdrop-blur-sm">
-                        <i class="fa-solid fa-chart-simple text-purple-400 animate-pulse text-3xl"></i>
+            <!-- Quick Account Switching Node Row Matrix -->
+            <div id="login-profiles-box" class="grid grid-cols-2 gap-4 pt-2 relative z-10">
+                <!-- Instanced via system startup runtime parameters -->
+            </div>
+
+            <div class="border-t border-white/10 pt-4 flex gap-2 relative z-10">
+                <input type="text" id="new-profile-name" placeholder="New Account Name" class="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-purple-400 text-white flex-grow placeholder-white/30">
+                <button onclick="addNewUserProfile()" class="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap border border-white/10 active:scale-95">Add Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT WRAPPER CONTAINER -->
+    <div id="dashboard-suite-workspace" class="opacity-0 pointer-events-none transition-all duration-700 ease-out flex-grow flex flex-col">
+        
+        <!-- Top Navigation Bar -->
+        <nav class="glass-nav fixed w-full z-40 top-0">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-nodes text-2xl text-cyan-400 drop-shadow-md"></i>
+                        <span class="font-bold text-xl tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">Workspace</span>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-2">
+                        <a href="#services" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Services</a>
+                        <a href="#weather" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Weather</a>
+                        <a href="#music" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Music Suite</a>
+                        <a href="#feed" class="hover:bg-white/10 px-4 py-2 rounded-xl text-sm font-medium transition-all">Feeds</a>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <div id="nav-user-name" class="text-xs font-bold text-white uppercase tracking-wider">--</div>
+                            <div class="text-[9px] font-medium text-cyan-400 uppercase tracking-widest">Active Session</div>
+                        </div>
+                        <button onclick="lockDashboardGateway()" class="bg-white/5 hover:bg-red-500/20 border border-white/10 p-2.5 rounded-xl transition-all group" title="Lock Identity Switcher">
+                            <i class="fa-solid fa-right-from-bracket text-xs text-white/60 group-hover:text-white"></i>
+                        </button>
                     </div>
                 </div>
-                
-                <div class="flex-grow min-w-0 flex flex-col justify-center">
-                    <h2 class="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1 flex items-center gap-2 justify-center md:justify-start drop-shadow-md">
-                        <i class="fa-solid fa-headphones"></i> Local Web Player
+            </div>
+        </nav>
+
+        <!-- Main Workspace Area -->
+        <main class="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full space-y-8">
+
+            <!-- Top Section: Services Grid & Weather Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <section id="services" class="lg:col-span-2 glass p-8 flex flex-col relative group/section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-cubes text-blue-400"></i> Apps & Services
+                        </h2>
+                        <button onclick="openServiceModal()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-white/10 transition-all active:scale-95">
+                            <i class="fa-solid fa-plus text-cyan-400"></i> Add Service
+                        </button>
+                    </div>
+                    <div id="services-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 flex-grow"></div>
+                </section>
+
+                <section id="weather" class="glass p-8 flex flex-col justify-between relative">
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-cloud-sun text-amber-400"></i> Weather
                     </h2>
-                    <div id="jf-title" class="text-2xl font-extrabold text-white truncate drop-shadow-sm leading-tight text-center md:text-left">Player Initializing</div>
-                    <div id="jf-artist" class="text-sm font-medium text-white/60 truncate mt-1 mb-4 text-center md:text-left">Please wait or check settings...</div>
+                        <button onclick="openWeatherModal()" class="bg-white/10 hover:bg-white/20 text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/10 transition-all flex items-center gap-1.5 active:scale-95">
+                            Expand <i class="fa-solid fa-expand text-[10px]"></i>
+                        </button>
+                    </div>
+                    <div class="flex-grow flex flex-col items-center justify-center my-6">
+                        <div id="weather-main-icon-container">
+                            <i id="weather-icon" class="fa-solid fa-circle-notch fa-spin text-5xl mb-4 text-white/50"></i>
+                        </div>
+                        <div class="text-6xl font-extrabold tracking-tighter drop-shadow"><span id="weather-temp">--</span>°C</div>
+                        <div id="weather-desc" class="text-sm mt-2 font-medium tracking-wide text-white/70">Updating forecast...</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs bg-black/20 p-3.5 rounded-2xl border border-white/5">
+                        <div class="flex items-center gap-2 justify-center">
+                            <i class="fa-solid fa-wind text-cyan-300"></i>
+                            <span id="weather-wind">-- km/h</span>
+                        </div>
+                        <div class="flex items-center gap-2 justify-center">
+                            <i class="fa-solid fa-droplet text-blue-400"></i>
+                            <span id="weather-humidity">-- %</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Advanced Local Jellyfin Web Player Suite -->
+            <section id="music" class="glass p-6 relative group/jf overflow-hidden transition-all duration-500">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                
+                <div class="absolute top-4 right-4 flex items-center gap-4 z-10">
+                    <button onclick="toggleQueuePanel()" class="text-white/40 hover:text-purple-400 transition-colors" title="Toggle Queue & Search">
+                        <i class="fa-solid fa-list-ol text-lg"></i>
+                    </button>
+                    <button onclick="openJellyfinModal()" class="text-white/40 hover:text-purple-400 transition-colors" title="Configure Jellyfin">
+                        <i class="fa-solid fa-gear text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-6 relative z-10">
+                    <div class="w-32 h-32 bg-black/40 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 relative shadow-xl mx-auto md:mx-0">
+                        <img id="jf-art" src="https://svgshare.com/i/y1m.svg" class="w-full h-full object-cover opacity-80 transition-opacity duration-300" alt="Album Art">
+                        <div id="jf-playing-indicator" class="absolute inset-0 bg-black/50 flex items-center justify-center hidden backdrop-blur-sm">
+                            <i class="fa-solid fa-chart-simple text-purple-400 animate-pulse text-3xl"></i>
+                        </div>
+                    </div>
                     
-                    <div class="flex flex-col sm:flex-row items-center gap-6 justify-between">
-                        <div class="flex items-center gap-5 text-white/80">
-                            <button onclick="prevLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Previous Track">
-                                <i class="fa-solid fa-backward-step text-lg"></i>
-                            </button>
-                            <button onclick="toggleLocalPlay()" class="w-12 h-12 bg-purple-500 hover:bg-purple-400 text-white rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-105 active:scale-95 outline-none" title="Play / Pause">
-                                <i id="jf-play-icon" class="fa-solid fa-play ml-1 text-lg"></i>
-                            </button>
-                            <button onclick="nextLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Next Track">
-                                <i class="fa-solid fa-forward-step text-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="flex items-center gap-2.5 bg-black/20 px-4 py-2 rounded-xl border border-white/5 w-full sm:w-auto justify-center">
-                            <i id="vol-icon" class="fa-solid fa-volume-high text-xs text-white/60 w-4"></i>
-                            <input type="range" min="0" max="1" step="0.01" value="1" oninput="setLocalVolume(this.value)" class="native-slider vol-slider w-24">
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-3 mt-4">
-                        <span id="jf-time-current" class="text-[10px] font-semibold text-white/50 w-8 text-right font-mono">0:00</span>
+                    <div class="flex-grow min-w-0 flex flex-col justify-center">
+                        <h2 class="text-[10px] font-bold uppercase tracking-widest text-purple-400 mb-1 flex items-center gap-2 justify-center md:justify-start drop-shadow-md">
+                            <i class="fa-solid fa-headphones"></i> Local Web Player
+                        </h2>
+                        <div id="jf-title" class="text-2xl font-extrabold text-white truncate drop-shadow-sm leading-tight text-center md:text-left">Player Initializing</div>
+                        <div id="jf-artist" class="text-sm font-medium text-white/60 truncate mt-1 mb-4 text-center md:text-left">Please wait or check settings...</div>
                         
-                        <input type="range" min="0" max="100" value="0" step="0.1" id="jf-time-range" class="native-slider time-slider flex-grow" oninput="handleSliderDrag(this.value)" onchange="seekLocalTrackFromSlider(this.value)">
-                        
-                        <span id="jf-time-total" class="text-[10px] font-semibold text-white/50 w-8 font-mono">0:00</span>
+                        <div class="flex flex-col sm:flex-row items-center gap-6 justify-between">
+                            <!-- Playback Controls Buttons Suite with 15s Jumps Included -->
+                            <div class="flex items-center gap-4 text-white/80">
+                                <button onclick="prevLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Previous Track">
+                                    <i class="fa-solid fa-backward-step text-sm"></i>
+                                </button>
+                                <button onclick="skipTimeSeconds(-15)" class="hover:text-purple-400 hover:scale-110 active:scale-95 transition-all outline-none text-white/60" title="Skip Back 15s">
+                                    <i class="fa-solid fa-arrow-rotate-left text-sm relative"><span class="absolute text-[7px] font-bold inset-0 flex items-center justify-center pt-0.5 font-sans">15</span></i>
+                                </button>
+                                <button onclick="toggleLocalPlay()" class="w-12 h-12 bg-purple-500 hover:bg-purple-400 text-white rounded-full flex items-center justify-center transition-all shadow-lg hover:scale-105 active:scale-95 outline-none" title="Play / Pause">
+                                    <i id="jf-play-icon" class="fa-solid fa-play ml-1 text-lg"></i>
+                                </button>
+                                <button onclick="skipTimeSeconds(15)" class="hover:text-purple-400 hover:scale-110 active:scale-95 transition-all outline-none text-white/60" title="Skip Forward 15s">
+                                    <i class="fa-solid fa-arrow-rotate-right text-sm relative"><span class="absolute text-[7px] font-bold inset-0 flex items-center justify-center pt-0.5 font-sans">15</span></i>
+                                </button>
+                                <button onclick="nextLocalTrack()" class="hover:text-white hover:scale-110 active:scale-95 transition-all outline-none" title="Next Track">
+                                    <i class="fa-solid fa-forward-step text-sm"></i>
+                                </button>
+                            </div>
+
+                            <!-- Hardware Volume Node -->
+                            <div class="flex items-center gap-2.5 bg-black/20 px-4 py-2 rounded-xl border border-white/5 w-full sm:w-auto justify-center">
+                                <i id="vol-icon" class="fa-solid fa-volume-high text-xs text-white/60 w-4"></i>
+                                <input type="range" min="0" max="1" step="0.01" value="1" oninput="setLocalVolume(this.value)" class="native-slider vol-slider w-24">
+                            </div>
+                        </div>
+
+                        <!-- Optimized Native Draggable Time Range Slider Node -->
+                        <div class="flex items-center gap-3 mt-4">
+                            <span id="jf-time-current" class="text-[10px] font-semibold text-white/50 w-8 text-right font-mono">0:00</span>
+                            
+                            <input type="range" min="0" max="100" value="0" step="0.1" id="jf-time-range" class="native-slider time-slider flex-grow" oninput="handleSliderDrag(this.value)" onchange="seekLocalTrackFromSlider(this.value)">
+                            
+                            <span id="jf-time-total" class="text-[10px] font-semibold text-white/50 w-8 font-mono">0:00</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Expandable Queue and Search Component Panel Workspace -->
+                <div id="jf-queue-panel" class="mt-6 pt-6 border-t border-white/10 hidden grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10 max-h-[400px] overflow-y-auto">
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search Track Library
+                        </h3>
+                        <div class="relative">
+                            <input type="text" id="jf-search-input" oninput="searchJellyfinTracks(this.value)" placeholder="Search songs, artists, albums..." class="w-full bg-black/20 border border-white/10 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-400 text-white placeholder-white/30">
+                        </div>
+                        <div id="jf-search-results" class="space-y-1.5 max-h-[280px] overflow-y-auto pr-1">
+                            <p class="text-xs text-white/40 italic p-2">Type above to search your music collection...</p>
+                        </div>
                     </div>
 
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul"></i> What's Up Next
+                        </h3>
+                        <div id="jf-queue-list" class="space-y-1.5 max-h-[320px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Curated Interactive News Feed Array Core -->
+            <section id="feed" class="glass p-8 space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold flex items-center gap-3">
+                        <i class="fa-regular fa-newspaper text-pink-400"></i> Media Stream Updates
+                    </h2>
+                    <button onclick="openFeedModal()" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border border-white/10 transition-all active:scale-95">
+                        <i class="fa-solid fa-plus text-pink-400"></i> Add Feed Entry
+                    </button>
+                </div>
+                <div id="feeds-root-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Target dynamic custom feed nodes load here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals Registry -->
+    <!-- Modal Form: Add Custom Feed Entry -->
+    <div id="feed-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
+        <div class="glass-modal p-6 rounded-3xl w-full max-w-md border border-white/20 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-bottom border-white/10 pb-2">
+                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-bullhorn text-pink-400"></i> Publish Custom Feed Source</h3>
+                <button onclick="closeFeedModal()" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Article / Stream Title</label>
+                    <input type="text" id="feed-title" placeholder="e.g. Server Core Upgrade Complete" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Brief Description</label>
+                    <textarea id="feed-desc" placeholder="Details regarding this custom notification context channel node..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400 text-white h-20 resize-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Source Label</label>
+                        <input type="text" id="feed-source" placeholder="e.g. Homelab Alert" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-white/60 mb-1">Asset Cover Image URL</label>
+                        <input type="text" id="feed-img" placeholder="https://..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400 text-white">
+                    </div>
                 </div>
             </div>
-
-            <div id="jf-queue-panel" class="mt-6 pt-6 border-t border-white/10 hidden grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10 max-h-[400px] overflow-y-auto">
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass"></i> Search Track Library
-                    </h3>
-                    <div class="relative">
-                        <input type="text" id="jf-search-input" oninput="searchJellyfinTracks(this.value)" placeholder="Search songs, artists, albums..." class="w-full bg-black/20 border border-white/10 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-purple-400 text-white placeholder-white/30">
-                    </div>
-                    <div id="jf-search-results" class="space-y-1.5 max-h-[280px] overflow-y-auto pr-1">
-                        <p class="text-xs text-white/40 italic p-2">Type above to search your music collection...</p>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-                        <i class="fa-solid fa-list-ul"></i> What's Up Next
-                    </h3>
-                    <div id="jf-queue-list" class="space-y-1.5 max-h-[320px] overflow-y-auto pr-1">
-                    </div>
-                </div>
+            <div class="pt-2 flex justify-end gap-2">
+                <button onclick="closeFeedModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white/5 hover:bg-white/10 transition-all">Cancel</button>
+                <button onclick="saveFeedItem()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 hover:brightness-110 transition-all shadow-lg">Inject Event</button>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="feed" class="glass p-8">
-            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                <i class="fa-regular fa-newspaper text-pink-400"></i> Media Stream Updates
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
-                    <div class="h-44 bg-slate-900 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <i class="fa-brands fa-youtube text-5xl text-red-500 drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">Orchestrating Environments</h3>
-                        <p class="text-xs text-white/70 line-clamp-2">A dive into declarations, isolation logic, networking profiles, and secure mounting paradigms.</p>
-                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
-                            <span>SysAdmin Core</span>
-                            <span>2 Hours Ago</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
-                    <div class="h-44 bg-slate-900 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <i class="fa-solid fa-network-wired text-5xl text-cyan-400 drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">The Self-Hosting Architecture</h3>
-                        <p class="text-xs text-white/70 line-clamp-2">How local containerization infrastructures are changing data control protocols.</p>
-                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
-                            <span>Homelab Gazette</span>
-                            <span>5 Hours Ago</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all cursor-pointer group">
-                    <div class="h-44 bg-slate-900 relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" alt="Cover">
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                            <i class="fa-brands fa-github text-5xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-base leading-snug mb-2 group-hover:text-cyan-300 transition-colors">Top Dashboards & Tooling</h3>
-                        <p class="text-xs text-white/70 line-clamp-2">Curated analysis of UI frontends designed for consolidated cluster visibility.</p>
-                        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
-                            <span>OSS Metrics</span>
-                            <span>1 Day Ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
+    <!-- Modal Form: Add Service Configuration -->
     <div id="service-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
         <div class="glass-modal p-6 rounded-3xl w-full max-w-md border border-white/20 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-bottom border-white/10 pb-2">
@@ -316,6 +360,7 @@
         </div>
     </div>
 
+    <!-- Modal Form: Jellyfin Configuration -->
     <div id="jf-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
         <div class="glass-modal p-6 rounded-3xl w-full max-w-md border border-white/20 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-bottom border-white/10 pb-2">
@@ -330,7 +375,6 @@
                 <div>
                     <label class="block text-xs font-semibold uppercase text-white/60 mb-1">API Key</label>
                     <input type="password" id="jf-apikey" placeholder="Enter Jellyfin API Key" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-400 text-white">
-                    <p class="text-[10px] text-white/40 mt-1 mt-2">Generate an API key in Jellyfin Dashboard > Advanced > API Keys.</p>
                 </div>
             </div>
             <div class="pt-2 flex justify-end gap-2">
@@ -340,6 +384,7 @@
         </div>
     </div>
 
+    <!-- Modal Panel: Weather Forecast Deep Dive Matrix -->
     <div id="weather-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden transition-opacity duration-300 opacity-0">
         <div class="glass-modal p-6 rounded-3xl w-full max-w-3xl border border-white/20 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center">
@@ -389,6 +434,7 @@
         </div>
     </div>
 
+    <!-- Orchestration Processing Script Core Engine Logic -->
     <script>
         const DEFAULT_SERVICES = [
             { name: 'Plex', link: '#', type: 'auto', iconVal: '' },
@@ -397,42 +443,178 @@
             { name: 'Portainer', link: '#', type: 'auto', iconVal: '' }
         ];
 
+        const DEFAULT_FEEDS = [
+            { title: "Orchestrating Environments", desc: "A dive into declarations, isolation logic, networking profiles, and secure mounting paradigms.", source: "SysAdmin Core", img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&auto=format&fit=crop" },
+            { title: "The Self-Hosting Architecture", desc: "How local containerization infrastructures are changing data control protocols.", source: "Homelab Gazette", img: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=600&auto=format&fit=crop" }
+        ];
+
+        const DEFAULT_PROFILES = ['pixel', 'Guest', 'HomeStation'];
+
         let services = JSON.parse(localStorage.getItem('dashboard_services')) || DEFAULT_SERVICES;
+        let feedItems = JSON.parse(localStorage.getItem('dashboard_feeds')) || DEFAULT_FEEDS;
+        let userProfiles = JSON.parse(localStorage.getItem('dashboard_profiles')) || DEFAULT_PROFILES;
         let jfConfig = JSON.parse(localStorage.getItem('dashboard_jf_config')) || { url: '', apiKey: '' };
-        let activeWeatherData = null;
         
+        let activeWeatherData = null;
         let localQueue = [];
         let currentTrackIndex = 0;
         let localPlayer = new Audio();
         let isPlayingLocally = false;
         let jfUserId = null;
         let searchTimeout = null;
-        let isDraggingSlider = false; // Flag to pause auto-updates while seeking
+        let isDraggingSlider = false;
 
-        // Ensure variables and functions attach firmly to window for HTML event handlers
-        window.openJellyfinModal = openJellyfinModal;
-        window.closeJellyfinModal = closeJellyfinModal;
-        window.saveJellyfinConfig = saveJellyfinConfig;
-        window.toggleLocalPlay = toggleLocalPlay;
-        window.prevLocalTrack = prevLocalTrack;
-        window.nextLocalTrack = nextLocalTrack;
-        window.setLocalVolume = setLocalVolume;
-        window.toggleQueuePanel = toggleQueuePanel;
-        window.searchJellyfinTracks = searchJellyfinTracks;
-        window.jumpToTrack = jumpToTrack;
-        window.moveTrack = moveTrack;
-        window.removeTrackFromQueue = removeTrackFromQueue;
-        window.addTrackToQueue = addTrackToQueue;
-        window.openServiceModal = openServiceModal;
-        window.closeServiceModal = closeServiceModal;
-        window.saveService = saveService;
-        window.deleteService = deleteService;
-        window.toggleIconField = toggleIconField;
-        window.openWeatherModal = openWeatherModal;
-        window.closeWeatherModal = closeWeatherModal;
-        window.handleSliderDrag = handleSliderDrag;
-        window.seekLocalTrackFromSlider = seekLocalTrackFromSlider;
+        // Force Global Binding Array Strategy for Inline View Event Accessors
+        Object.assign(window, {
+            openJellyfinModal, closeJellyfinModal, saveJellyfinConfig,
+            toggleLocalPlay, prevLocalTrack, nextLocalTrack, setLocalVolume,
+            toggleQueuePanel, searchJellyfinTracks, jumpToTrack, moveTrack,
+            removeTrackFromQueue, addTrackToQueue, openServiceModal, closeServiceModal,
+            saveService, deleteService, toggleIconField, openWeatherModal, closeWeatherModal,
+            handleSliderDrag, seekLocalTrackFromSlider, skipTimeSeconds,
+            openFeedModal, closeFeedModal, saveFeedItem, removeFeedItem,
+            unlockDashboardSession, lockDashboardGateway, addNewUserProfile
+        });
 
+        // --- AUTHENTICATION VAULT GATEWAY CONTROL ---
+        function renderIdentityGateway() {
+            const container = document.getElementById('login-profiles-box');
+            container.innerHTML = '';
+            userProfiles.forEach(profile => {
+                const isPixel = profile.toLowerCase() === 'pixel';
+                container.innerHTML += `
+                    <button onclick="unlockDashboardSession('${profile}')" class="p-4 bg-white/5 hover:bg-purple-500/20 border border-white/10 rounded-2xl flex flex-col items-center justify-center gap-2 group transition-all active:scale-95 shadow-sm">
+                        <div class="w-12 h-12 rounded-full ${isPixel ? 'bg-cyan-500/20' : 'bg-white/10'} flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fa-solid ${isPixel ? 'fa-user-astronaut text-cyan-400' : 'fa-user text-white/70'} text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold tracking-wide truncate w-full text-white/90">${profile}</span>
+                    </button>
+                `;
+            });
+            localStorage.setItem('dashboard_profiles', JSON.stringify(userProfiles));
+        }
+
+        function unlockDashboardSession(username) {
+            document.getElementById('nav-user-name').innerText = username;
+            const gateway = document.getElementById('account-gateway');
+            const mainApp = document.getElementById('dashboard-suite-workspace');
+            
+            gateway.classList.add('opacity-0', 'pointer-events-none');
+            mainApp.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function lockDashboardGateway() {
+            const gateway = document.getElementById('account-gateway');
+            const mainApp = document.getElementById('dashboard-suite-workspace');
+            
+            mainApp.classList.add('opacity-0', 'pointer-events-none');
+            gateway.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function addNewUserProfile() {
+            const input = document.getElementById('new-profile-name');
+            const name = input.value.trim();
+            if (!name) return;
+            if (userProfiles.includes(name)) return alert('Identity profile token token collision.');
+            userProfiles.push(name);
+            input.value = '';
+            renderIdentityGateway();
+        }
+
+        // --- INTERACTIVE NEWS FEED ROUTINES ---
+        function renderCustomFeeds() {
+            const grid = document.getElementById('feeds-root-grid');
+            grid.innerHTML = '';
+            feedItems.forEach((item, index) => {
+                const fallBackImg = "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?q=80&w=600&auto=format&fit=crop";
+                grid.innerHTML += `
+                    <div class="bg-black/20 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all relative group/feedcard flex flex-col">
+                        <div class="h-40 bg-slate-900 relative overflow-hidden flex-shrink-0">
+                            <img src="${item.img || fallBackImg}" class="w-full h-full object-cover opacity-60 group-hover/feedcard:scale-105 transition-transform duration-500" onerror="this.src='${fallBackImg}'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                        </div>
+                        <div class="p-5 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-base leading-snug mb-2 text-white group-hover/feedcard:text-pink-400 transition-colors">${item.title}</h3>
+                                <p class="text-xs text-white/70 line-clamp-3">${item.desc}</p>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mt-4 tracking-wider">
+                                <span>${item.source}</span>
+                                <button onclick="removeFeedItem(${index})" class="opacity-0 group-hover/feedcard:opacity-100 hover:text-red-400 text-xs transition-opacity p-1 focus:outline-none" title="Purge Feed Resource"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            localStorage.setItem('dashboard_feeds', JSON.stringify(feedItems));
+        }
+
+        function openFeedModal() {
+            const el = document.getElementById('feed-modal');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.remove('opacity-0'), 10);
+        }
+
+        function closeFeedModal() {
+            const el = document.getElementById('feed-modal');
+            el.classList.add('opacity-0');
+            setTimeout(() => {
+                el.classList.add('hidden');
+                document.getElementById('feed-title').value = '';
+                document.getElementById('feed-desc').value = '';
+                document.getElementById('feed-source').value = '';
+                document.getElementById('feed-img').value = '';
+            }, 300);
+        }
+
+        function saveFeedItem() {
+            const title = document.getElementById('feed-title').value.trim();
+            const desc = document.getElementById('feed-desc').value.trim();
+            const source = document.getElementById('feed-source').value.trim() || 'Custom Feed';
+            const img = document.getElementById('feed-img').value.trim();
+
+            if (!title || !desc) return alert('Title and Context description boundaries required.');
+
+            feedItems.unshift({ title, desc, source, img });
+            renderCustomFeeds();
+            closeFeedModal();
+        }
+
+        function removeFeedItem(index) {
+            feedItems.splice(index, 1);
+            renderCustomFeeds();
+        }
+
+        // --- TRACK TIMELINE STEP JUMP MATRIX FUNCTIONS ---
+        function skipTimeSeconds(seconds) {
+            if (!localPlayer.src || !isFinite(localPlayer.duration)) return;
+            let targetTime = localPlayer.currentTime + seconds;
+            localPlayer.currentTime = Math.max(0, Math.min(localPlayer.duration, targetTime));
+        }
+
+        function handleSliderDrag(value) {
+            isDraggingSlider = true;
+            document.getElementById('jf-time-range').style.setProperty('--progress', `${value}%`);
+            if (localPlayer.duration && isFinite(localPlayer.duration)) {
+                document.getElementById('jf-time-current').innerText = formatTime((value / 100) * localPlayer.duration);
+            }
+        }
+
+        function seekLocalTrackFromSlider(value) {
+            if (localPlayer.duration && isFinite(localPlayer.duration)) {
+                localPlayer.currentTime = (value / 100) * localPlayer.duration;
+            }
+            isDraggingSlider = false;
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // --- AUTOMATED REGEX ICON DICTIONARY LOOKUPS ---
         function getAutoIconMarkup(name) {
             const token = name.toLowerCase().trim();
             if (token.includes('plex')) return `<i class="fa-brands fa-plex text-4xl text-amber-500 transition-transform group-hover:scale-110"></i>`;
@@ -521,33 +703,6 @@
             renderServices();
         }
 
-        function formatTime(seconds) {
-            if (!seconds || isNaN(seconds)) return "0:00";
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        // --- NEW SLIDER DRAG & SEEK LOGIC ---
-        function handleSliderDrag(value) {
-            isDraggingSlider = true;
-            // Update the CSS variable to paint the slider track while dragging
-            document.getElementById('jf-time-range').style.setProperty('--progress', `${value}%`);
-            
-            // Preview the time text while dragging
-            if (localPlayer.duration && isFinite(localPlayer.duration)) {
-                const targetTime = (value / 100) * localPlayer.duration;
-                document.getElementById('jf-time-current').innerText = formatTime(targetTime);
-            }
-        }
-
-        function seekLocalTrackFromSlider(value) {
-            if (localPlayer.duration && isFinite(localPlayer.duration)) {
-                localPlayer.currentTime = (value / 100) * localPlayer.duration;
-            }
-            isDraggingSlider = false;
-        }
-
         function toggleQueuePanel() {
             const panel = document.getElementById('jf-queue-panel');
             panel.classList.toggle('hidden');
@@ -621,7 +776,7 @@
                         localQueue = foundItems;
                         currentTrackIndex = 0;
                         document.getElementById('jf-title').innerText = "Ready to Play";
-                        document.getElementById('jf-artist').innerText = `${localQueue.length} tracks found.`;
+                        document.getElementById('jf-artist').innerText = `${localQueue.length} tracks discovered.`;
                         renderQueueUI();
                     } else {
                         document.getElementById('jf-title').innerText = "No Music Found";
@@ -632,7 +787,6 @@
             } catch (err) {
                 console.error("Local Player Init Error:", err);
                 document.getElementById('jf-title').innerText = "Connection Failed";
-                document.getElementById('jf-artist').innerText = "Check CORS or API Key.";
                 localQueue = [];
             }
         }
@@ -642,7 +796,6 @@
             document.getElementById('jf-artist').innerText = (item.Artists && item.Artists.join(', ')) || item.Album || "Unknown Artist";
             document.getElementById('jf-art').src = `${jfConfig.url}/Items/${item.Id}/Images/Primary?api_key=${jfConfig.apiKey}&maxHeight=200`;
             
-            // Reset Native Slider UI
             const timeRange = document.getElementById('jf-time-range');
             timeRange.value = 0;
             timeRange.style.setProperty('--progress', '0%');
@@ -657,7 +810,7 @@
         }
 
         function toggleLocalPlay() {
-            if (localQueue.length === 0) return alert('No tracks are loaded in the active queue.');
+            if (localQueue.length === 0) return alert('Active tracking queue matrix empty.');
             if (localPlayer.paused) {
                 if (!localPlayer.src || localPlayer.src === window.location.href) {
                     loadTrackIntoUI(localQueue[currentTrackIndex]);
@@ -692,29 +845,27 @@
             const container = document.getElementById('jf-queue-list');
             container.innerHTML = '';
             if (localQueue.length === 0) {
-                container.innerHTML = `<p class="text-xs text-white/30 italic p-2">Playback sequence is currently empty.</p>`;
+                container.innerHTML = `<p class="text-xs text-white/30 italic p-2">Playback sequence empty.</p>`;
                 return;
             }
-            
             localQueue.forEach((item, index) => {
                 const isCurrent = index === currentTrackIndex;
-                const row = document.createElement('div');
-                row.className = `flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${isCurrent ? 'bg-purple-500/30 border border-purple-500/20' : 'bg-white/5 hover:bg-white/10'}`;
-                row.innerHTML = `
-                    <div class="flex items-center gap-2 min-w-0 flex-grow cursor-pointer" onclick="jumpToTrack(${index})">
-                        <span class="w-4 text-center font-bold opacity-40">${index + 1}</span>
-                        <div class="truncate">
-                            <div class="font-semibold text-white truncate">${item.Name}</div>
-                            <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Various Artists'}</div>
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-xl text-xs transition-colors ${isCurrent ? 'bg-purple-500/30 border border-purple-500/20' : 'bg-white/5 hover:bg-white/10'}">
+                        <div class="flex items-center gap-2 min-w-0 flex-grow cursor-pointer" onclick="jumpToTrack(${index})">
+                            <span class="w-4 text-center font-bold opacity-40">${index + 1}</span>
+                            <div class="truncate">
+                                <div class="font-semibold text-white truncate">${item.Name}</div>
+                                <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Various Artists'}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 ml-2">
+                            <button onclick="moveTrack(${index}, -1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
+                            <button onclick="moveTrack(${index}, 1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
+                            <button onclick="removeTrackFromQueue(${index})" class="p-1 text-white/40 hover:text-red-400 transition-colors" title="Remove"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1.5 ml-2">
-                        <button onclick="moveTrack(${index}, -1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
-                        <button onclick="moveTrack(${index}, 1)" class="p-1 text-white/40 hover:text-white transition-colors" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
-                        <button onclick="removeTrackFromQueue(${index})" class="p-1 text-white/40 hover:text-red-400 transition-colors" title="Remove"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
                 `;
-                container.appendChild(row);
             });
         }
 
@@ -739,17 +890,13 @@
 
         function removeTrackFromQueue(index) {
             localQueue.splice(index, 1);
-            if (currentTrackIndex >= localQueue.length && localQueue.length > 0) {
-                currentTrackIndex = localQueue.length - 1;
-            }
+            if (currentTrackIndex >= localQueue.length && localQueue.length > 0) currentTrackIndex = localQueue.length - 1;
             if (localQueue.length === 0) {
-                localPlayer.pause();
-                localPlayer.src = "";
-                isPlayingLocally = false;
+                localPlayer.pause(); localPlayer.src = ""; isPlayingLocally = false;
                 document.getElementById('jf-play-icon').className = 'fa-solid fa-play ml-1 text-lg';
                 document.getElementById('jf-playing-indicator').classList.add('hidden');
                 document.getElementById('jf-title').innerText = "Queue Empty";
-                document.getElementById('jf-artist').innerText = "Add more music to play.";
+                document.getElementById('jf-artist').innerText = "Add tracks to begin processing.";
                 document.getElementById('jf-time-range').value = 0;
                 document.getElementById('jf-time-range').style.setProperty('--progress', '0%');
                 document.getElementById('jf-time-current').innerText = "0:00";
@@ -763,7 +910,7 @@
         function searchJellyfinTracks(query) {
             clearTimeout(searchTimeout);
             if (!query.trim()) {
-                document.getElementById('jf-search-results').innerHTML = `<p class="text-xs text-white/40 italic p-2">Type above to search your music collection...</p>`;
+                document.getElementById('jf-search-results').innerHTML = `<p class="text-xs text-white/40 italic p-2">Type to query music library asset indices...</p>`;
                 return;
             }
             searchTimeout = setTimeout(async () => {
@@ -772,7 +919,7 @@
                     const data = await res.json();
                     renderSearchResults(data.Items || []);
                 } catch (err) {
-                    console.error("Search pipeline error:", err);
+                    console.error(err);
                 }
             }, 350);
         }
@@ -781,23 +928,22 @@
             const container = document.getElementById('jf-search-results');
             container.innerHTML = '';
             if (items.length === 0) {
-                container.innerHTML = `<p class="text-xs text-white/40 italic p-2">No matching tracks discovered.</p>`;
+                container.innerHTML = `<p class="text-xs text-white/40 italic p-2">Zero matching entities located.</p>`;
                 return;
             }
             items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs transition-colors group";
-                card.innerHTML = `
-                    <div class="truncate min-w-0 flex-grow pr-2">
-                        <div class="font-semibold text-white truncate">${item.Name}</div>
-                        <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Unknown Artist'}</div>
-                    </div>
-                    <div class="flex items-center gap-1 flex-shrink-0">
-                        <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, true)' class="bg-purple-600/50 hover:bg-purple-500 text-white px-2.5 py-1 rounded-lg font-medium transition-all" title="Play Now">Play</button>
-                        <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, false)' class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition-all" title="Add to Queue"><i class="fa-solid fa-plus"></i></button>
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs transition-colors group">
+                        <div class="truncate min-w-0 flex-grow pr-2">
+                            <div class="font-semibold text-white truncate">${item.Name}</div>
+                            <div class="text-[11px] text-white/50 truncate">${(item.Artists && item.Artists.join(', ')) || 'Unknown Artist'}</div>
+                        </div>
+                        <div class="flex items-center gap-1 flex-shrink-0">
+                            <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, true)' class="bg-purple-600/50 hover:bg-purple-500 text-white px-2.5 py-1 rounded-lg font-medium transition-all">Play</button>
+                            <button onclick='addTrackToQueue(${JSON.stringify(item).replace(/'/g, "&apos;")}, false)' class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition-all"><i class="fa-solid fa-plus"></i></button>
+                        </div>
                     </div>
                 `;
-                container.appendChild(card);
             });
         }
 
@@ -805,8 +951,7 @@
             localQueue.push(item);
             renderQueueUI();
             if (playImmediately) {
-                currentTrackIndex = localQueue.length - 1;
-                isPlayingLocally = true;
+                currentTrackIndex = localQueue.length - 1; isPlayingLocally = true;
                 document.getElementById('jf-play-icon').className = 'fa-solid fa-pause text-lg';
                 document.getElementById('jf-playing-indicator').classList.remove('hidden');
                 loadTrackIntoUI(item);
@@ -815,7 +960,7 @@
             }
         }
 
-        // --- HTML5 AUDIO EVENT LISTENERS WITH NATIVE SLIDER SYNC ---
+        // --- HTML5 AUDIO SYNCHRONIZER CORE NODE ---
         localPlayer.addEventListener('timeupdate', () => {
             if (localPlayer.duration && isFinite(localPlayer.duration) && !isDraggingSlider) {
                 const percent = (localPlayer.currentTime / localPlayer.duration) * 100;
@@ -831,7 +976,6 @@
                 document.getElementById('jf-time-total').innerText = formatTime(localPlayer.duration);
             }
         });
-
         localPlayer.addEventListener('ended', nextLocalTrack);
 
         // --- OPEN-METEO WEATHER ENGINE PROTOCOLS ---
@@ -841,58 +985,48 @@
             2: { desc: 'Partly cloudy', icon: 'fa-cloud-sun', color: 'text-slate-200' },
             3: { desc: 'Overcast', icon: 'fa-cloud', color: 'text-slate-400' },
             45: { desc: 'Foggy conditions', icon: 'fa-smog', color: 'text-slate-300' },
-            48: { desc: 'Depositing rime fog', icon: 'fa-smog', color: 'text-slate-400' },
-            51: { desc: 'Light drizzle', icon: 'fa-cloud-rain', color: 'text-sky-300' },
             61: { desc: 'Slight rain', icon: 'fa-cloud-showers-heavy', color: 'text-sky-400' },
-            71: { desc: 'Slight snow', icon: 'fa-snowflake', color: 'text-blue-200' },
             95: { desc: 'Thunderstorm', icon: 'fa-cloud-bolt', color: 'text-amber-400' }
         };
 
         async function fetchWeather() {
             try {
                 const apiURL = 'https://api.open-meteo.com/v1/forecast?latitude=52.5233&longitude=7.3172&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,surface_pressure,visibility&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto';
-                const res = await fetch(apiURL);
-                activeWeatherData = await res.json();
+                const res = await fetch(apiURL); activeWeatherData = await res.json();
                 if (activeWeatherData && activeWeatherData.current_weather) {
                     const current = activeWeatherData.current_weather;
                     document.getElementById('weather-temp').innerText = Math.round(current.temperature);
                     document.getElementById('weather-wind').innerText = current.windspeed + ' km/h';
                     document.getElementById('weather-humidity').innerText = (activeWeatherData.hourly.relativehumidity_2m[new Date().getHours()] || '--') + ' %';
-                    const lookup = WEATHER_CODE_INDEX[current.weathercode] || { desc: 'Unclassified', icon: 'fa-cloud-sun', color: 'text-white' };
+                    const lookup = WEATHER_CODE_INDEX[current.weathercode] || { desc: 'Variable', icon: 'fa-cloud-sun', color: 'text-white' };
                     document.getElementById('weather-desc').innerText = lookup.desc;
                     document.getElementById('weather-main-icon-container').innerHTML = `<i id="weather-icon" class="fa-solid ${lookup.icon} text-5xl mb-4 ${lookup.color} drop-shadow-md transition-all"></i>`;
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         function openWeatherModal() {
-            if (!activeWeatherData) return alert('Metrics registry down.');
+            if (!activeWeatherData) return alert('Registry mapping down.');
             const el = document.getElementById('weather-modal');
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.remove('opacity-0'), 10);
+            el.classList.remove('hidden'); setTimeout(() => el.classList.remove('opacity-0'), 10);
             const hrIdx = new Date().getHours();
             document.getElementById('wx-apparent').innerText = `${Math.round(activeWeatherData.hourly.apparent_temperature[hrIdx])}°C`;
             document.getElementById('wx-precip').innerText = `${activeWeatherData.hourly.precipitation_probability[hrIdx]}%`;
             document.getElementById('wx-pressure').innerText = `${Math.round(activeWeatherData.hourly.surface_pressure[hrIdx])} hPa`;
             document.getElementById('wx-visibility').innerText = `${(activeWeatherData.hourly.visibility[hrIdx] / 1000).toFixed(1)} km`;
 
-            const hourlyContainer = document.getElementById('wx-hourly-container');
-            hourlyContainer.innerHTML = '';
+            const hourlyContainer = document.getElementById('wx-hourly-container'); hourlyContainer.innerHTML = '';
             for (let i = hrIdx; i < hrIdx + 24; i++) {
                 if (!activeWeatherData.hourly.temperature_2m[i]) break;
-                const dateObj = new Date(activeWeatherData.hourly.time[i]);
                 hourlyContainer.innerHTML += `
                     <div class="min-w-[75px] bg-white/5 border border-white/5 p-3 rounded-xl flex flex-col items-center snap-center text-center text-xs flex-shrink-0">
-                        <span class="opacity-60 text-[10px] font-medium">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span class="opacity-60 text-[10px] font-medium">${new Date(activeWeatherData.hourly.time[i]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         <span class="font-bold text-sm my-1.5">${Math.round(activeWeatherData.hourly.temperature_2m[i])}°</span>
                         <span class="text-[10px] text-cyan-300 font-semibold flex items-center gap-0.5"><i class="fa-solid fa-droplet text-[8px]"></i>${activeWeatherData.hourly.precipitation_probability[i]}%</span>
                     </div>`;
             }
 
-            const dailyContainer = document.getElementById('wx-daily-container');
-            dailyContainer.innerHTML = '';
+            const dailyContainer = document.getElementById('wx-daily-container'); dailyContainer.innerHTML = '';
             activeWeatherData.daily.time.forEach((dayStr, i) => {
                 const lookup = WEATHER_CODE_INDEX[activeWeatherData.daily.weathercode[i]] || { desc: 'Variable', icon: 'fa-cloud-sun', color: 'text-white' };
                 dailyContainer.innerHTML += `
@@ -911,13 +1045,14 @@
         }
 
         function closeWeatherModal() {
-            const el = document.getElementById('weather-modal');
-            el.classList.add('opacity-0');
+            const el = document.getElementById('weather-modal'); el.classList.add('opacity-0');
             setTimeout(() => el.classList.add('hidden'), 300);
         }
 
-        // --- LIFE-CYCLE INIT RUNTIME TRIGGERS ---
+        // --- RUNTIME BOOTLOADER INVOCATION ---
+        renderIdentityGateway();
         renderServices();
+        renderCustomFeeds();
         fetchWeather();
         initLocalPlayer();
         setInterval(fetchWeather, 1800000);
